@@ -3,6 +3,7 @@
 ## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
   - [Backend](#backend)
     - [Development](#development)
@@ -21,11 +22,21 @@ Provide a brief description of your project here.
 - [x] User Authentication
 - [x] Product Management
 - [x] Cart Management
-- [x] Payment Processing
+- [x] Payment Processing (Midtrans)
 - [x] Order Management
 - [x] Responsive Design
 
 ## Getting Started
+
+```env
+DATABASE_URL="your_database_url_here"
+PORT=your_port_number_here
+JWT_SECRET=your_jwt_secret_here
+MIDTRANS_SERVER_KEY=your_midtrans_server_key_here
+MIDTRANS_CLIENT_KEY=your_midtrans_client_key_here
+BASE_URL_FRONTEND="your_frontend_base_url_here"
+MIDTRANS_APP_URL=your_midtrans_app_url_here
+```
 
 ### Backend
 
@@ -84,3 +95,9 @@ To use the Postman documentation, import the files located in the `docs` folder 
 1. Open Postman.
 2. Go to the `Import` section.
 3. Select the files located in the `docs` folder.
+
+## Contributing
+Explain how other users can contribute to the project.
+
+## License
+Include licensing information here.
