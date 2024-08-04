@@ -2,6 +2,7 @@
 
 ## Table of Contents
 - [Introduction](#introduction)
+- [Features](#features)
 - [Getting Started](#getting-started)
   - [Backend](#backend)
     - [Development](#development)
@@ -15,6 +16,14 @@
 
 ## Introduction
 Provide a brief description of your project here.
+
+## Features
+- [x] User Authentication
+- [x] Product Management
+- [x] Cart Management
+- [x] Payment Processing
+- [x] Order Management
+- [x] Responsive Design
 
 ## Getting Started
 
@@ -75,9 +84,3 @@ To use the Postman documentation, import the files located in the `docs` folder 
 1. Open Postman.
 2. Go to the `Import` section.
 3. Select the files located in the `docs` folder.
-
-## Contributing
-Explain how other users can contribute to the project.
-
-## License
-Include licensing information here.
