@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Button, Container, Form, InputGroup } from 'react-bootstrap';
+import { Button, Container, Form, InputGroup, Stack } from 'react-bootstrap';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+
   const [error, setError] = useState<string>('');
 
   const formik = useFormik({
@@ -91,9 +92,11 @@ const RegisterPage: React.FC = () => {
             {formik.errors.password}
           </Form.Control.Feedback>
         </Form.Group>
-        <Button style={{ marginTop: '20px' }} variant="primary" type="submit">
-          Register
-        </Button>
+        <Stack>
+          <Button style={{ marginTop: '20px' }} variant="primary" type="submit">
+            Register
+          </Button>
+        </Stack>
       </Form>
     </Container>
   );

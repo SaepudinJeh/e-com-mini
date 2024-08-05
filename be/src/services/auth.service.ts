@@ -15,9 +15,6 @@ export class AuthService {
       validated.role = "admin";
     }
 
-    console.log(validated);
-    
-
     const hashedPassword = await bcrypt.hash(validated.password, 10);
     const { password, id,  ...user } = await prisma.user.create({
       data: {

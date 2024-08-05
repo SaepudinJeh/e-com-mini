@@ -7,7 +7,7 @@ export default function ProductPageAdmin() {
 
     return (
         <div className="w-full">
-            <Stack direction="horizontal">
+            <Stack direction="horizontal" style={{ marginBottom: "20px" }}>
                 <Button onClick={() => navigate('/admin/product-create')} className="ms-auto" variant="danger">Create Product</Button>
             </Stack>
             <TableProduct />

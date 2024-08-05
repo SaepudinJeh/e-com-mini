@@ -1,7 +1,10 @@
 import { PrismaClient } from '@prisma/client';
-import crypto from "crypto";
+import Stripe from 'stripe';
 
 const prisma = new PrismaClient();
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2024-06-20",
+});
 
 export class TransactionService {
 
@@ -12,57 +15,42 @@ export class TransactionService {
     });
 
     if (cartItems.length === 0) {
-      return false
+      return false;
     }
 
-    const gross_amount = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
     const orderId = `ORDER-${new Date().toISOString()}`;
 
-    // Create transaction parameters for Midtrans
-    const transactionParams = {
-      transaction_details: {
-        order_id: orderId,
-        gross_amount
-      },
-      credit_card: {
-        secure: true,
-      },
-      customer_details: {
-        first_name: customerName,
-        email: customerEmail,
-      },
-      item_details: cartItems.map(item => ({
-        id: item.productId.toString(),
-        price: item.product.price,
-        quantity: item.quantity,
+    const lineItems = await Promise.all(cartItems.map(async (item) => {
+      const product = await stripe.products.create({
         name: item.product.name,
-      })),
-      callbacks: {
-        finish: `${process.env.BASE_URL_FRONTEND}/transactions`,
-        error: `${process.env.BASE_URL_FRONTEND}/transactions`,
-        pending: `${process.env.BASE_URL_FRONTEND}/transactions`
-      }
-    };
+      });
 
-    const authString = btoa(`${process.env.MIDTRANS_SERVER_KEY}:`)
-  
-    const response = await fetch(`${process.env.MIDTRANS_APP_URL!}`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'Authorization': `Basic ${authString}`
-      },
-      body: JSON.stringify(transactionParams)
-    });
-    
+      const price = await stripe.prices.create({
+        product: product.id,
+        unit_amount: item.product.price * 100, // Stripe expects the amount in the smallest currency unit
+        currency: 'idr',
+      });
 
-    const data = await response.json();
+      return {
+        price: price.id,
+        quantity: item.quantity,
+      };
+    }));
 
-    if (response?.status !== 201) {
+    const checkout = await stripe.checkout.sessions.create({
+      line_items: lineItems,
+      currency: 'idr',
+      mode: "payment",
+      success_url: `${process.env.BASE_URL_FRONTEND!}/transactions`,
+      cancel_url: `${process.env.BASE_URL_FRONTEND!}/cart`,
+      customer_email: customerEmail,
+      metadata: { orderId, wkwkwkw: "wkwkwk" }
+    })
+
+    if(!checkout.url) {
       return false
     }
-
+    
     await prisma.transaction.create({
       data: {
         userId,
@@ -74,33 +62,34 @@ export class TransactionService {
           price: item.product.price,
           quantity: item.quantity,
         })),
-        gross_amount,
-        status: 'capture',
+        gross_amount: checkout?.amount_total!,
+        status: checkout?.status! ?? "pending",
         customer_name: customerName,
         customer_email: customerEmail,
-        snap_token: data?.token,
-        snap_redirect_url: data?.redirect_url,
+        stripe_redirect_url: checkout.url
       },
     });
 
-    // Clear user's cart after successful transaction
+    // Clear user's cart after creating the transaction
     await prisma.cart.updateMany({
       where: { userId, deletedAt: null },
       data: { deletedAt: new Date() }
     });
 
-    return { ...data, orderId };
+    return {
+      redirect_url: checkout.url,
+      // orderId,
+    };
   }
 
-  async updatePaymentStatus(orderId: string, status: string, payment_method?: string) {
-    await prisma.transaction.updateMany({
-      where: {
-        orderId,
-      },
+  async updatePaymentStatus({orderId, status, payment_method, payment_status }: {orderId: string, status?: string, payment_method?: string, payment_status?: string }) {
+    await prisma.transaction.update({
+      where: { orderId },
       data: {
         status,
         updated_at: new Date(),
-        payment_method
+        payment_method,
+        payment_status
       },
     });
   }
@@ -108,9 +97,7 @@ export class TransactionService {
   async getTransactionHistory(userId: number) {
     return await prisma.transaction.findMany({
       where: { userId },
-      orderBy: {
-        updated_at: 'desc'
-      },
+      orderBy: { updated_at: 'desc' },
     });
   }
 
@@ -124,22 +111,5 @@ export class TransactionService {
     }
 
     return transaction;
-  }
-
-  async handleMidtransNotification(payload: any) {
-    const { order_id, transaction_status, signature_key, payment_method } = payload;
-    const  trx = await prisma.transaction.findUnique({
-      where: { orderId: order_id },
-    });
-
-    const generatedSignatureKey = crypto.createHash('sha512').update(
-      `${order_id}${transaction_status}${trx?.gross_amount}${process.env.MIDTRANS_SERVER_KEY}`
-    ).digest('hex');
-
-    if (generatedSignatureKey !== signature_key) {
-      throw new Error('Invalid signature key');
-    }
-
-    await this.updatePaymentStatus(order_id, transaction_status, payment_method);
   }
 }

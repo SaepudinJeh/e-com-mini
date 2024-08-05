@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import useFetchWithAuth from '../../services/hooks/use_fetch_auth.hook';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type ProductFormType = {
@@ -22,7 +22,7 @@ function ProductForm({ id, name, description, price, image }: ProductFormType) {
   const { setIsFetching, loading, status } = useFetchWithAuth({
     path: '/products',
     options: {
-      method: formData?.id ? "PUT":  "POST",
+      method: "POST",
       data: formData
     }
   });
@@ -55,11 +55,6 @@ function ProductForm({ id, name, description, price, image }: ProductFormType) {
       navigate('/');
     }
   }, [status]);
-
-  useEffect(() => {
-    setFormData({ id, name, description, price, image });
-    formik.setValues({ name: name || '', description: description || '', price: price || 0, image: image || '' });
-  }, [id, name, description, price, image]);
 
   return (
     <Form style={{ maxWidth: "500px", margin: "auto" }} onSubmit={formik.handleSubmit}>

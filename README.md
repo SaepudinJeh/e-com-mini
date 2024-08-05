@@ -12,8 +12,6 @@
     - [Development](#development-1)
     - [Production](#production-1)
   - [Postman Documentation](#postman-documentation)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 Provide a brief description of your project here.
@@ -28,14 +26,16 @@ Provide a brief description of your project here.
 
 ## Getting Started
 
+### Environment Variables
+Create a `.env` file in the `/be/` directory with the following content:
+
 ```env
 DATABASE_URL="your_database_url_here"
 PORT=your_port_number_here
 JWT_SECRET=your_jwt_secret_here
-MIDTRANS_SERVER_KEY=your_midtrans_server_key_here
-MIDTRANS_CLIENT_KEY=your_midtrans_client_key_here
 BASE_URL_FRONTEND="your_frontend_base_url_here"
-MIDTRANS_APP_URL=your_midtrans_app_url_here
+STRIPE_SECRET_KEY="your_secret_key_stripe"
+STRIPE_WEBHOOK_SECRET="your_secret_key_web_hook_stripe"
 ```
 
 ### Backend
@@ -90,14 +90,15 @@ To build the frontend for production, use the following command:
     yarn build
     ```
 
+### Environment Variables
+Demo app with `vercel` you can access:
+
+```url
+https://vercel.com
+```
+
 ### Postman Documentation
 To use the Postman documentation, import the files located in the `docs` folder into Postman:
 1. Open Postman.
 2. Go to the `Import` section.
 3. Select the files located in the `docs` folder.
-
-## Contributing
-Explain how other users can contribute to the project.
-
-## License
-Include licensing information here.

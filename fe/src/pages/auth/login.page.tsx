@@ -4,12 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Button, Container, Form, InputGroup } from 'react-bootstrap';
+import { Button, Container, Form, InputGroup, Stack } from 'react-bootstrap';
 import { AuthContext } from '../../libs/contexts/auth.context';
 
 const LoginPage: React.FC = () => {
   const authCtx = useContext(AuthContext);
   const navigate = useNavigate();
+
   const [error, setError] = useState<string>('');
 
   const formik = useFormik({
@@ -42,7 +43,7 @@ const LoginPage: React.FC = () => {
   });
 
   return (
-    <Container style={{ width: '100%', height: '100vh' }}>
+    <Container style={{ width: '100%', height: '100vh', margin: "auto" }}>
       <Form style={{ maxWidth: '450px', margin: '100px auto' }} onSubmit={formik.handleSubmit}>
         <h2 style={{ textAlign: 'center', margin: '30px 0' }}>Login</h2>
         {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -76,9 +77,14 @@ const LoginPage: React.FC = () => {
             {formik.errors.password}
           </Form.Control.Feedback>
         </Form.Group>
-        <Button style={{ marginTop: '20px' }} variant="primary" type="submit">
-          Login
-        </Button>
+
+        <Stack direction='vertical' gap={1}>
+          <Button style={{ marginTop: '20px' }} variant="primary" type="submit">
+            Login
+          </Button>
+
+          <Button onClick={() => navigate('/auth/register')} variant="outline-dark">Register Account</Button>
+        </Stack>
       </Form>
     </Container>
   );
