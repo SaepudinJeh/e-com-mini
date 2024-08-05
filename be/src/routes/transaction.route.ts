@@ -9,7 +9,5 @@ const transactionController = new TransactionController();
 router.post('/checkout', AuthMiddleware.authenticate, RoleMiddleware.authorize(['user']), transactionController.checkout);
 router.get('/history', AuthMiddleware.authenticate, RoleMiddleware.authorize(['user']), transactionController.getTransactionHistory);
 router.get('/:id', AuthMiddleware.authenticate, RoleMiddleware.authorize(['user']), transactionController.getTransactionDetail);
-router.post('/update-status', AuthMiddleware.authenticate, RoleMiddleware.authorize(['user']), transactionController.updatePaymentStatus);
-router.post('/notification', transactionController.handleMidtransNotification);
 
 export default router;

@@ -15,11 +15,10 @@ export type TransactionOrderType = {
     status: string;
     customer_name: string;
     customer_email: string;
-    snap_token: string;
-    snap_redirect_url: string;
     payment_method: string | null;
     created_at: string;
     updated_at: string;
+    payment_status?: string;
 };
 
 export type TransactionDataType = {

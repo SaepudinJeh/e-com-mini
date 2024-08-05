@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.route";
 import productRoutes from "./routes/product.route";
 import cartsRoutes from "./routes/cart.route";
 import userRoute from "./routes/user.route";
+import webhookRoute from "./routes/webhook_stripe.route";
 import transactionRoutes from "./routes/transaction.route";
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { RoleMiddleware } from './middlewares/role.middlewares';
@@ -18,6 +19,8 @@ app.use(cors({
 }))
 const prisma = new PrismaClient();
 
+
+app.use('/webhook', webhookRoute);
 app.use(express.json());
 
 app.use('/auth', authRoutes);

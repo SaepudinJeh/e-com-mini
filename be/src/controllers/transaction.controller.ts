@@ -39,28 +39,4 @@ export class TransactionController {
       res.status(400).json({ error: error.message });
     }
   }
-
-  async updatePaymentStatus(req: Request, res: Response) {
-    try {
-      const { order_id, transaction_status } = req.body;
-      await transactionService.updatePaymentStatus(order_id, transaction_status);
-      res.status(200).json({ message: 'Payment status updated' });
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
-  }
-
-  async handleMidtransNotification(req: Request, res: Response) {
-    try {
-      const { order_id, transaction_status } = req.body;
-      console.log("runninnggg");
-      
-      console.log(req.body);
-      
-      await transactionService.updatePaymentStatus(order_id, transaction_status);
-      res.status(200).json({ message: 'Payment status updated' });
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
-  }
 }

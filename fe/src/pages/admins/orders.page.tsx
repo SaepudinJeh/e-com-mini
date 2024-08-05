@@ -36,7 +36,8 @@ export default function OrdersPageAdmin() {
                             <td>{idx += 1}</td>
                             <td>{val?.orderId}</td>
                             <td>{formatToIDR(val?.gross_amount)}</td>
-                            <td><Badge bg={val?.status === "capture" ? "success": "warning"}>{val?.status === "capture" ? "completed" : val?.status}</Badge></td>
+                            <td><Badge bg={val?.status === "complete" ? "success" : "warning"}>{val?.status === "capture" ? "completed" : val?.status}</Badge></td>
+                            <td style={{ color: val?.payment_status === "paid" ? 'green' : "gray", textAlign: "center" }}>{val?.payment_status}</td>
                             <td>{val?.customer_name}</td>
                             <td>{val?.customer_email}</td>
                         </tr>

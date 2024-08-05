@@ -48,18 +48,18 @@ model Cart {
 }
 
 model Transaction {
-  id                Int      @id @default(autoincrement())
-  userId            Int
-  user              User     @relation(fields: [userId], references: [id])
-  orderId           String   @unique
-  items             Json
-  gross_amount      Float
-  status            String
-  customer_name     String   @db.VarChar(255)
-  customer_email    String   @db.VarChar(255)
-  snap_token        String?  @db.VarChar(255)
-  snap_redirect_url String?  @db.VarChar(255)
-  payment_method    String?  @db.VarChar(110)
-  created_at        DateTime @default(now()) @db.Timestamp(0)
-  updated_at        DateTime @default(now()) @db.Timestamp(0)
+  id                  Int      @id @default(autoincrement())
+  userId              Int
+  user                User     @relation(fields: [userId], references: [id])
+  orderId             String   @unique
+  items               Json
+  gross_amount        Float
+  status              String
+  customer_name       String
+  customer_email      String
+  stripe_redirect_url String?
+  payment_method      String?
+  payment_status      String?
+  created_at          DateTime @default(now()) @db.Timestamp(0)
+  updated_at          DateTime @default(now()) @db.Timestamp(0)
 }

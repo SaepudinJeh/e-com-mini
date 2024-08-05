@@ -12,6 +12,7 @@ import Homepage from "../pages/homepage.page";
 import CartPage from "../pages/cart.page";
 import TransactionsPage from "../pages/transaction.page";
 import OrdersPageAdmin from "../pages/admins/orders.page";
+import ProtectedAuthRoute from "./auth.layout";
 
 const router = createBrowserRouter([
     {
@@ -55,11 +56,11 @@ const router = createBrowserRouter([
     },
     {
         path: '/auth/register',
-        element: <RegisterPage />
+        element: <ProtectedAuthRoute element={<RegisterPage />} />
     },
     {
         path: '/auth/login',
-        element: <LoginPage />
+        element: <ProtectedAuthRoute element={<LoginPage />} />
     }
 ]);
 
