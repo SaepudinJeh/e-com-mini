@@ -94,7 +94,15 @@ To build the frontend for production, use the following command:
 Demo app with `vercel` you can access:
 
 ```url
-https://vercel.com
+https://e-com-mini-nano.vercel.app/
+```
+
+### ADMIN (ROLE)
+By default admin created if register with email `superadmin@mail.com`:
+
+```base
+email: superadmin@mail.com
+password: "your_password"
 ```
 
 ### Postman Documentation
