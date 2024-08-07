@@ -5,7 +5,7 @@ export class ProductValidation {
         name: z.string(),
         description: z.string(),
         price: z.number(),
-        image: z.string(),
+        image: z.string().optional(),
     });
 
     static update: ZodType = z.object({

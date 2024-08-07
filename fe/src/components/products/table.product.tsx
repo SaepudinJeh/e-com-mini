@@ -56,7 +56,7 @@ export default function TableProduct() {
                             <td>{val.name}</td>
                             <td>{val.description}</td>
                             <td>{val.price}</td>
-                            <td><Image src={val?.image} rounded style={{ width: "80px" }} /></td>
+                            <td><Image src={`http://localhost:3001/${val?.image}`} rounded style={{ width: "80px" }} /></td>
                             <td>{val?.createdAt && new Date(val?.createdAt)?.toLocaleDateString()}</td>
                             <td>
                                 <Stack direction='horizontal' gap={3}>

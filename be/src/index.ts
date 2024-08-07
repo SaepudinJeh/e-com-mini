@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import cors from "cors";
+import path from 'path';
 
 import authRoutes from "./routes/auth.route";
 import productRoutes from "./routes/product.route";
@@ -14,6 +15,9 @@ import { errorMiddleware } from './middlewares/error.middleware';
 
 
 const app = express();
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 app.use(cors({
   origin: "*"
 }))
@@ -22,6 +26,7 @@ const prisma = new PrismaClient();
 
 app.use('/webhook', webhookRoute);
 app.use(express.json());
+
 
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);

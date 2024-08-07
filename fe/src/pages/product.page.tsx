@@ -45,7 +45,7 @@ function CardComponent(data: CardProps) {
   const { setCart, ...dataProduct } = data
   return (
     <Card style={{ width: '18rem' }}>
-      <Card.Img variant="top" src={ data?.image ?? 'holder.js/100px180' } style={{ height: "250px", objectFit: "cover" }} />
+      <Card.Img variant="top" src={ data?.image ? `http://localhost:3001/${data.image}` : 'holder.js/100px180' } style={{ height: "250px", objectFit: "cover" }} />
       <Card.Body>
         <Card.Title>{data?.name}</Card.Title>
         <Card.Text>

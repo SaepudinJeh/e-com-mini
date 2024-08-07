@@ -81,7 +81,7 @@ export default function CartPage() {
                                     <td>{idx += 1}</td>
                                     <td>{val?.product?.name}</td>
                                     <td>{val?.product?.price}</td>
-                                    <td><Image src={val?.product?.image} rounded style={{ width: "80px" }} /></td>
+                                    <td><Image src={`http://localhost:3001/${val?.product?.image}`} rounded style={{ width: "80px" }} /></td>
                                     <td>{val?.quantity}</td>
                                     <td>{formatToIDR(val?.product?.price * val?.quantity)}</td>
                                     <td>

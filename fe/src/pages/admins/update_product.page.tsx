@@ -1,74 +1,91 @@
 import { useNavigate, useParams } from "react-router-dom";
 import useFetchWithAuth from "../../services/hooks/use_fetch_auth.hook";
 import { ProductDetailType } from "../../libs/types/product.type";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import * as Yup from 'yup';
 import { useFormik } from "formik";
 import { Button, Form } from "react-bootstrap";
-
-type ProductFormType = {
-    id?: number;
-    name?: string;
-    description?: string;
-    price?: number;
-    image?: string;
-}
+import axios from 'axios'; // Import axios for file uploads
+import { AuthContext } from "../../libs/contexts/auth.context";
 
 export default function UpdateProductPageAdmin() {
-    const { id } = useParams()
+    const authCtx = useContext(AuthContext)
+
+    const { id } = useParams();
 
     const { setIsFetching, data } = useFetchWithAuth<ProductDetailType>({
         path: `/products/${id}`,
-    })
+    });
 
-    useEffect(() => setIsFetching(true), [])
+    useEffect(() => setIsFetching(true), []);
 
     const navigate = useNavigate();
-
-    const [formData, setFormData] = useState<ProductFormType>({});
-
-    const { setIsFetching: startFetchingUpdate, loading, status } = useFetchWithAuth({
-        path: '/products',
-        options: {
-            method: "PUT",
-            data: formData
-        }
-    });
+    const [loading, setLoading] = useState<boolean>(false);
 
     const formik = useFormik({
         initialValues: {
-            name: formData.name || '',
-            description: formData.description || '',
-            price: formData.price || 0,
-            image: formData.image || '',
+            name: '',
+            description: '',
+            price: 0,
+            image: null,
         },
         validationSchema: Yup.object({
             name: Yup.string().required('Required'),
             description: Yup.string().required('Required'),
             price: Yup.number().required('Required').positive('Price must be a positive number'),
-            image: Yup.string().url('Invalid URL').required('Required'),
+            image: Yup.mixed().required('Required'), // File input validation
         }),
         onSubmit: async (values) => {
             try {
-                setFormData({...values, id: Number(id)});
-                startFetchingUpdate(true);
+                const formData = new FormData();
+                formData.append('id', id || '')
+                formData.append('name', values.name || '');
+                formData.append('description', values.description || '');
+                formData.append('price', values.price?.toString() || '');
+                if (values.image) {
+                    formData.append('image', values.image);
+                }
+
+                setLoading(true);
+
+                await axios.put(`http://localhost:3001/products`, formData, {
+                    headers: {
+                        'Authorization': `Bearer ${authCtx?.authData?.token}`,
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    data: formData
+                });
+
+                navigate('/');
             } catch (error) {
                 console.error('Error:', error);
+            } finally {
+                setLoading(false);
             }
         },
     });
 
     useMemo(() => {
-        if (status === 200) {
-            navigate('/');
+        if (data?.data) {
+            formik.setValues({
+                name: data.data.name || '',
+                description: data.data.description || '',
+                price: data.data.price || 0,
+                image: null, // Reset image field
+            });
         }
-    }, [status]);
+    }, [data?.data]);
 
     useEffect(() => {
         if (id) {
-            formik.setValues({ name: data?.data?.name || '', description: data?.data?.description || '', price: data?.data?.price || 0, image: data?.data?.image || '' });
+            formik.setValues({
+                name: data?.data?.name || '',
+                description: data?.data?.description || '',
+                price: data?.data?.price || 0,
+                image: null,
+            });
         }
-    }, [data?.data]);
+    }, [data?.data, id]);
 
     return (
         <Form style={{ maxWidth: "500px", margin: "auto" }} onSubmit={formik.handleSubmit}>
@@ -105,15 +122,22 @@ export default function UpdateProductPageAdmin() {
             <Form.Group className="mb-3" controlId="image">
                 <Form.Label>Image</Form.Label>
                 <Form.Control
-                    type="text"
-                    placeholder="Image ...."
-                    {...formik.getFieldProps('image')}
+                    type="file"
+                    accept="image/*" // Limit to image files
+                    onChange={(event) => {
+                        const target = event.currentTarget as HTMLInputElement;
+                        if (target.files) {
+                            formik.setFieldValue('image', target.files[0]);
+                        }
+                    }}
                     isInvalid={!!formik.errors.image && formik.touched.image}
                 />
                 <Form.Control.Feedback type="invalid">{formik.errors.image}</Form.Control.Feedback>
             </Form.Group>
 
-            <Button variant="primary" disabled={loading} type="submit">{loading ? "Saving..." : "Update"}</Button>
+            <Button variant="primary" disabled={loading} type="submit">
+                {loading ? "Saving..." : "Update"}
+            </Button>
         </Form>
-    )
+    );
 }
